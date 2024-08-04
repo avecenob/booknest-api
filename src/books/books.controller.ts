@@ -7,7 +7,6 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-// import { Book } from './interfaces/book.interface';
 import { BooksService } from './books.service';
 import { SaveBookDto } from './dto/save-book.dto';
 
@@ -17,7 +16,7 @@ export class BooksController {
 
   @Post()
   async save(@Body() saveBookDto: SaveBookDto) {
-    return this.bookService.save(saveBookDto);
+    return this.bookService.create(saveBookDto);
   }
 
   @Get()
