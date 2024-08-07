@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpStatus,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { User } from './user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -19,42 +24,76 @@ export class UsersService {
       await this.userRepository.save(user);
     } catch (error) {
       console.log(error);
-      throw new HttpException(
-        'internal server error',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new InternalServerErrorException();
     }
 
     return {
-      status: 201,
-      message: 'user created',
+      status: HttpStatus.CREATED,
+      message: 'User created',
       data: user,
     };
   }
 
-  findAll(): Promise<User[]> {
-    return this.userRepository.find();
-  }
+  async findAll() {
+    const users: User[] = await this.userRepository.find();
 
-  findById(id: string): Promise<User> {
-    return this.userRepository.findOneBy({ id });
-  }
-
-  async updateById(user: User) {
-    const { id } = user;
-    const userToUpdate: User = await this.userRepository.findOneBy({ id });
-    await this.userRepository.save(userToUpdate);
     return {
-      status: 200,
-      message: `user with id: ${id} updated`,
+      status: HttpStatus.OK,
+      message: 'Success',
+      data: users,
+    };
+  }
+
+  async findById(id: string) {
+    const user: User = await this.userRepository.findOneBy({ id });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return {
+      status: HttpStatus.OK,
+      message: 'User found',
+      data: user,
+    };
+  }
+
+  async updateById(id: string, user: User) {
+    const userToUpdate: User = await this.userRepository.findOneBy({ id });
+
+    if (!userToUpdate) {
+      throw new NotFoundException('User not found');
+    }
+
+    try {
+      await this.userRepository.save(user);
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException();
+    }
+    return {
+      status: HttpStatus.OK,
+      message: `User with id: ${id} updated`,
     };
   }
 
   async deleteById(id: string) {
-    await this.userRepository.delete(id);
+    const userToDelete = await this.userRepository.findOneBy({ id });
+
+    if (!userToDelete) {
+      throw new NotFoundException('User not found');
+    }
+
+    try {
+      await this.userRepository.delete(id);
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException();
+    }
+
     return {
-      status: 200,
-      message: `user with id: ${id} deleted.`,
+      status: HttpStatus.OK,
+      message: `User with id: ${id} deleted.`,
     };
   }
 }
