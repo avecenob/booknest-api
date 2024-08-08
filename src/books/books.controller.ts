@@ -30,8 +30,8 @@ export class BooksController {
   }
 
   @Put(':id')
-  updateById(@Body() saveBookDto: SaveBookDto) {
-    return this.bookService.updateById(saveBookDto);
+  updateById(@Param() params: any, @Body() saveBookDto: SaveBookDto) {
+    return this.bookService.updateById(params.id, saveBookDto);
   }
 
   @Delete(':id')

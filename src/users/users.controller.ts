@@ -30,8 +30,8 @@ export class UsersController {
   }
 
   @Put(':id')
-  updateById(@Body() saveUserDto: SaveUserDto) {
-    return this.userService.updateById(saveUserDto);
+  updateById(@Param() params: any, @Body() saveUserDto: SaveUserDto) {
+    return this.userService.updateById(params.id, saveUserDto);
   }
 
   @Delete(':id')
