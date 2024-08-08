@@ -4,7 +4,6 @@ import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 @Entity()
 export class User {
   @PrimaryColumn('char', { length: 16 })
-  @OneToMany(() => ReadList, (readList) => readList.user)
   id: string;
 
   @Column('varchar')
@@ -18,4 +17,7 @@ export class User {
 
   @Column('varchar')
   role: string;
+
+  @OneToMany(() => ReadList, (readList) => readList.user)
+  readLists?: ReadList[];
 }

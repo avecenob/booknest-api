@@ -3,8 +3,7 @@ import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 
 @Entity()
 export class Book {
-  @PrimaryColumn('char', { length: 10 })
-  @OneToMany(() => ReadList, (readList) => readList.book)
+  @PrimaryColumn('char', { length: 16 })
   id: string;
 
   @Column('varchar')
@@ -24,4 +23,7 @@ export class Book {
 
   @Column('int')
   pageCount: number;
+
+  @OneToMany(() => ReadList, (readList) => readList.book)
+  readLists?: ReadList[];
 }
