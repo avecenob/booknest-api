@@ -1,6 +1,17 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import { ReadListService } from './read-list.service';
 import { SaveListDto } from './dto/save-list.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 /**
  *
@@ -9,20 +20,33 @@ import { SaveListDto } from './dto/save-list.dto';
  *
  */
 
+@UseGuards(AuthGuard)
 @Controller('read-list')
 export class ReadListController {
   constructor(private readListService: ReadListService) {}
 
   @Post()
-  addBook(@Body() saveListDto: SaveListDto) {
-    return this.readListService.addItem(saveListDto);
+  addBook(@Request() req) {
+    return this.readListService.addList(req.body);
   }
 
   @Get()
   getList() {
-    return this.readListService.getList();
+    return this.readListService.getAll();
   }
 
   @Get(':id')
-  getListById() {}
+  getItemById(@Param() params: any) {
+    return this.readListService.getItemById(params.id);
+  }
+
+  @Put(':id')
+  updateItemById(@Param() params: any, @Body() saveListDto: SaveListDto) {
+    return this.readListService.updateItemById(params.id, saveListDto);
+  }
+
+  @Delete(':id')
+  deleteItemById(@Param() params: any) {
+    return this.readListService.deleteItemById(params.id);
+  }
 }
