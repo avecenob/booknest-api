@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { LoginInfo, RegisterInfo } from './interfaces/auth.interface';
 import { UsersService } from 'src/users/users.service';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -29,9 +29,11 @@ export class AuthService {
     const access_token = await this.jwtService.signAsync(payload);
 
     return {
-      status: 200,
-      message: `user id: ${user.id} logged in`,
-      data: access_token,
+      status: HttpStatus.OK,
+      message: `User with id: ${user.id} logged in`,
+      data: {
+        access_token: access_token,
+      },
     };
   }
 
